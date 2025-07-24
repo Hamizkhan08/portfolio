@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"> <!-- Only light theme -->
+<html lang="en" class="dark"> <!-- Dark mode is default -->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,25 +9,19 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
-        /* --- GENERAL & TRANSITION STYLES --- */
+        /* --- GENERAL & CURSOR STYLES --- */
         html { scroll-behavior: smooth; }
         body { 
             font-family: 'Poppins', sans-serif; 
             overflow-x: hidden; 
-            background-color: #f0f4f8; /* Base light background */
-            color: #1e293b; /* Base dark text color */
             transition: background-color 0.5s ease, color 0.5s ease;
-            cursor: none;
-        }
-        
-        a, button, .skill-card, .project-card, .nav-link, .nav-icon {
-            transition: all 0.3s ease-in-out;
+            cursor: none; /* Hide default cursor */
         }
 
         ::selection { background-color: #8b5cf6; color: rgb(255, 255, 255); }
@@ -40,154 +34,181 @@
             z-index: 9999;
             border-radius: 50%;
             transition: transform 0.2s ease-out, opacity 0.2s, background-color 0.2s, width 0.3s, height 0.3s;
-            mix-blend-mode: difference;
+            mix-blend-mode: difference; /* Cool effect on different backgrounds */
         }
-        #cursor-dot { width: 8px; height: 8px; background-color: #4f46e5;} /* Light theme cursor dot */
-        #cursor-circle { width: 40px; height: 40px; border: 1px solid #4f46e5; } /* Light theme cursor circle */
+        #cursor-dot { width: 8px; height: 8px; }
+        #cursor-circle { 
+            width: 40px; 
+            height: 40px; 
+            border: 1px solid; /* Use border for the circle */
+            background-color: transparent;
+        }
 
-        /* --- DYNAMIC GRADIENT BACKGROUND (Light Theme) --- */
+        /* Cursor hover effect */
+        body.cursor-hover #cursor-dot { transform: scale(0.5); }
+        body.cursor-hover #cursor-circle { transform: scale(1.5) rotate(90deg); opacity: 0.8; }
+
+        /* --- DYNAMIC GRADIENT BACKGROUND --- */
         #dynamic-gradient-background {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2;
-            background: radial-gradient(circle at top left, #e0e7ff, #c7d2fe, #f0f4f8);
+            transition: opacity 0.8s ease;
             background-size: 200% 200%;
             animation: gradient-animation 40s ease infinite;
         }
+
         @keyframes gradient-animation {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
 
-        /* --- UI ELEMENTS --- */
         #hero-3d-container { position: relative; width: 100%; height: 500px; z-index: 5; }
         #hero-3d-canvas { width: 100% !important; height: 100% !important; cursor: pointer; }
         @media (max-width: 768px) { #hero-3d-container { display: none; } }
 
         #navbar { transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out; }
-        #navbar.navbar-scrolled { background-color: rgba(240, 244, 248, 0.8); backdrop-filter: blur(10px); }
-        
-        /* Nav Links */
-        .nav-link { color: #475569; position: relative; }
-        .nav-link:hover { color: #1e293b; }
-        .nav-link::after { 
-            content: ''; position: absolute; width: 0; height: 2px; 
-            bottom: -4px; left: 50%; transform: translateX(-50%); 
-            background-color: #6366f1; transition: width 0.3s; 
-        }
-        .nav-link:hover::after { width: 100%; }
-
-        /* Nav Icons (GitHub, LinkedIn) */
-        .nav-icon {
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.25rem; /* text-xl */
-            color: #6366f1; /* Main indigo color for better visibility */
-        }
-        .nav-icon:hover { color: #4f46e5; transform: scale(1.1); } /* Darker indigo on hover */
         
         ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: #e0e7ff; }
-        ::-webkit-scrollbar-thumb { background: linear-gradient(45deg, #60a5fa, #818cf8); border-radius: 4px;}
 
         .section-heading-container { display: flex; align-items: center; gap: 1.5rem; }
         .heading-decorator {
             width: 1rem; height: 2.5rem; border-radius: 0.25rem;
-            background: linear-gradient(145deg, #60a5fa, #818cf8);
             transition: all 0.5s ease;
         }
         .section-header { flex-shrink: 0; }
         .section-header .char { display: inline-block; }
 
-        .timeline-path { position: absolute; top: 0; left: 18px; height: 100%; width: 4px; z-index: -1; background: #e2e8f0; }
-        .timeline-path-progress { position: absolute; top: 0; left: 0; height: 0; width: 100%; background: linear-gradient(to bottom, #60a5fa, #818cf8); }
-        .timeline-dot { transform-origin: center; background-color: #f8fafc; border: 4px solid #cbd5e1; }
-
-        /* Skills Section */
-        #skills .skills-container { padding: 2.5rem; border-radius: 1rem; background: rgba(255, 255, 255, 0.8); box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .timeline-path { position: absolute; top: 0; left: 18px; height: 100%; width: 4px; z-index: -1; transition: background-color 0.5s ease; }
+        .timeline-path-progress { position: absolute; top: 0; left: 0; height: 0; width: 100%; }
+        .timeline-dot { transform-origin: center; }
+        
+        .skill-category { padding: 2.5rem; border-radius: 1rem; }
+        .skill-category h3 { font-size: 1.5rem; font-weight: 700; margin-bottom: 2rem; }
         .skills-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 1.5rem; }
         .skill-card {
-            position: relative; height: 110px; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            border-radius: 0.75rem; opacity: 0; transform: translateY(30px); 
-            background-color: #f8fafc; /* Not pure white, subtle tint */
-            border: 1px solid #e2e8f0;
+            height: 110px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            border-radius: 0.75rem; transition: transform 0.4s ease, box-shadow 0.4s ease, background-color 0.3s ease;
+            opacity: 0; transform: translateY(30px) scale(0.95);
         }
-        .skill-card:hover { transform: translateY(-5px); box-shadow: 0 0 20px rgba(99, 102, 241, 0.3); border-color: #8b5cf6;}
-        .skill-card-content { z-index: 2; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .skill-card:hover { transform: scale(1.1) translateY(-5px); }
         .skill-card img { height: 40px; width: 40px; transition: transform 0.4s ease; }
-        .skill-card:hover img { transform: scale(1.1); }
         .skill-card span { margin-top: 0.75rem; font-weight: 500; font-size: 0.875rem; text-align: center; }
 
-        /* Projects Section */
-        #projects-wrapper { padding: 5vh 0 10vh 0; position: relative; z-index: 10; background: rgba(240, 244, 248, 0.9); }
-        #projects-header { max-width: 600px; margin: 0 auto 4rem auto; text-align: center; padding: 0 1rem; }
-        #projects-scroll-container { width: 100%; overflow-x: auto; overflow-y: hidden; padding: 1rem 0; scroll-behavior: smooth; }
-        .projects-grid { display: flex; gap: 2.5rem; padding: 0 5vw; width: max-content; }
-        .project-card { 
-            flex: 0 0 380px; border-radius: 1rem; display: flex; flex-direction: column; overflow: hidden; cursor: pointer;
-            background-color: #f8fafc; /* Not pure white, subtle tint */
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1); border: 1px solid #e2e8f0;
+        /* --- IMPROVED PROJECTS SECTION --- */
+        #projects-wrapper { padding: 10vh 0; }
+        #projects-header {
+            max-width: 450px; /* Limit width of the header text */
+            margin: 0 auto 5rem auto; /* Center and provide bottom margin */
+            text-align: center;
+            padding: 0 1rem;
         }
-        .project-card:hover { transform: translateY(-10px) scale(1.03); box-shadow: 0 15px 30px rgba(99, 102, 241, 0.2); border-color: #6366f1;}
-        .project-card-image-wrapper { width: 100%; height: 200px; overflow: hidden; }
-        .project-card-image-wrapper img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+        #projects { overflow: hidden; } 
+        #projects-container { height: 100vh; display: flex; align-items: center; padding: 0 !important; }
+        .projects-grid { display: flex; width: max-content; gap: 2.5rem; padding: 0 5vw; }
+        .project-card {
+            flex: 0 0 360px; overflow: hidden; border-radius: 1rem;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .project-card:hover { transform: translateY(-10px) scale(1.03); filter: brightness(1.1); }
+        .project-card img { width: 100%; height: 15rem; object-fit: cover; transition: transform 0.4s ease; }
         .project-card:hover img { transform: scale(1.05); }
-        .project-card-content { padding: 1.5rem; display: flex; flex-direction: column; flex-grow: 1; }
-        .project-card h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: 0.75rem; color: #1e293b; }
-        .project-card .description { flex-grow: 1; line-height: 1.6; color: #475569; }
-        .tech-stack-container { margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid #e2e8f0; }
-        .tech-stack-title { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.75rem; color: #64748b; }
-        .tech-stack-icons { display: flex; align-items: center; gap: 1rem; }
-        .tech-stack-icons img, .tech-stack-icons i { height: 24px; width: 24px; object-fit: contain; }
+        .project-card .p-6 { padding: 1.5rem; }
+        .project-card h3 { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem; }
 
-        /* Floating Trust Node (3D) */
-        #trust-node-container { position: fixed; top: 50%; right: 20px; transform: translateY(-50%); z-index: 1000; width: 100px; height: 100px; pointer-events: none; }
-        #trust-node-canvas { width: 100% !important; height: 100% !important; }
-        @media (max-width: 1024px) { #trust-node-container { display: none; } }
+        /* --- DARK MODE (DEFAULT GRAYSCALE) --- */
+        html.dark body { color: #e5e7eb; }
+        html.dark #dynamic-gradient-background { background: radial-gradient(circle at top left, #4a5568, #2d3748, #1a202c); }
+        html.dark #cursor-dot { background-color: #f0f4f8; }
+        html.dark #cursor-circle { border-color: #f0f4f8; }
+        html.dark #preloader { background-color: #1a202c; }
+        html.dark #preloader .animate-spin { border-color: #a0aec0; border-top-color: transparent; }
+        html.dark #preloader p { color: #e2e8f0; }
+        html.dark #navbar.navbar-scrolled { background-color: rgba(26, 32, 44, 0.8); backdrop-filter: blur(10px); box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
+        html.dark #theme-toggle-btn { background: #4a5568; color: #e2e8f0; width: 40px; height: 40px; }
+        html.dark #theme-toggle-btn .fa-sun { display: none; }
+        html.dark #theme-toggle-btn .fa-moon { display: block; }
+        html.dark .nav-link { color: #e2e8f0; position: relative; font-weight: 500; }
+        html.dark .nav-link:hover { color: #fff; }
+        html.dark .nav-link::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -4px; left: 50%; transform: translateX(-50%); background-color: #a0aec0; transition: width 0.3s ease; }
+        html.dark .nav-link:hover::after { width: 100%; }
+        html.dark .text-slate-800 { color: #f7fafc; } /* WHITE text for headings */
+        html.dark .text-slate-600 { color: #e2e8f0; } /* Lighter gray for subtitles */
+        html.dark .text-slate-500 { color: #a0aec0; } /* Light gray for other text */
+        html.dark .text-indigo-400 { color: #a78bfa; }
+        html.dark #hero h1 span { text-shadow: 1px 1px 20px rgba(255, 255, 255, 0.1); }
+        html.dark .content-section { background: rgba(45, 55, 72, 0.4); backdrop-filter: blur(8px); }
+        html.dark .heading-decorator { background: linear-gradient(145deg, #a0aec0, #f7fafc); box-shadow: 0 0 15px rgba(200, 200, 200, 0.2); }
+        html.dark .timeline-path { background: #4a5568; }
+        html.dark .timeline-path-progress { background: linear-gradient(to bottom, #e2e8f0, #a0aec0); }
+        html.dark .timeline-dot { background-color: #2d3748; border: 4px solid #4a5568; }
+        html.dark .skill-category { background: rgba(26, 32, 44, 0.7); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        html.dark .skill-card { background-color: #37304f; border: 1px solid #4a5568; }
+        html.dark .skill-card:hover { box-shadow: 0 0 25px rgba(226, 232, 240, 0.2); background-color: #4a5568; }
+        html.dark .project-card { background-color: #2d3748; box-shadow: 0 10px 20px rgba(0,0,0,0.3); border: 1px solid #4a5568; }
+        html.dark .project-card:hover { box-shadow: 0 15px 30px rgba(226, 232, 240, 0.2); border-color: #718096; }
+        html.dark .project-card p { color: #a0aec0; }
+        html.dark #contact-btn { color: #f7fafc; background-color: transparent; border: 2px solid #a0aec0; }
+        html.dark #contact-btn:hover { background-color: #f7fafc; color: #1a202c; }
+        html.dark footer { background-color: #1a202c; }
+        html.dark ::-webkit-scrollbar-track { background: #2d3748; }
+        html.dark ::-webkit-scrollbar-thumb { background: linear-gradient(45deg, #718096, #e2e8f0); border-radius: 10px; }
+        html.dark #projects-wrapper { background-color: rgba(26, 32, 44, 0.7); }
         
-        /* Footer */
-        #main-footer { padding: 4rem 2rem 2rem; position: relative; z-index: 20; background-color: #e2e8f0; }
-        .footer-content { display: flex; flex-direction: column; align-items: center; text-align: center; }
-        .footer-logo { font-size: 2.5rem; font-weight: 800; letter-spacing: -1px; margin-bottom: 1rem; color: #1e293b; }
-        .footer-text { max-width: 500px; margin-bottom: 2rem; color: #475569; }
-        .social-links { display: flex; gap: 1.5rem; margin-bottom: 2.5rem; }
-        .social-links a { font-size: 1.5rem; color: #6366f1; } /* Main indigo color for visibility */
-        .social-links a:hover { color: #4f46e5; transform: scale(1.2); } /* Darker indigo on hover */
-        .copyright { font-size: 0.875rem; color: #64748b; }
+        /* --- LIGHT MODE --- */
+        html:not(.dark) body { background-color: #f0f4f8; color: #1e293b; }
+        html:not(.dark) #dynamic-gradient-background { background: radial-gradient(circle at top left, #7584cf, #9facd0, #eaeff4); }
+        html:not(.dark) #cursor-dot { background-color: #4f46e5; }
+        html:not(.dark) #cursor-circle { border-color: #4f46e5; }
+        html:not(.dark) #preloader { background-color: #f0f4f8; }
+        html:not(.dark) #preloader p { color: #54657d; }
+        html:not(.dark) #navbar.navbar-scrolled { background-color: rgba(248, 250, 252, 0.8); }
+        html:not(.dark) #theme-toggle-btn { background: #eef2ff; color: #4f46e5; }
+        html:not(.dark) #theme-toggle-btn .fa-sun { display: block; }
+        html:not(.dark) #theme-toggle-btn .fa-moon { display: none; }
+        html:not(.dark) .nav-link { color: #475569; }
+        html:not(.dark) .nav-link:hover { color: #1e293b; }
+        html:not(.dark) .nav-link::after { background-color: #6366f1; }
+        html:not(.dark) .text-slate-800 { color: #1e293b; }
+        html:not(.dark) .text-slate-600 { color: #475569; }
+        html:not(.dark) .text-slate-500 { color: #64748b; }
+        html:not(.dark) .text-indigo-400 { color: #6366f1; }
+        html:not(.dark) #hero h1 span { text-shadow: 1px 1px 10px rgba(0,0,0,0.1); }
+        html.not(.dark) .content-section { background: rgba(255, 255, 255, 0.7); }
+        html:not(.dark) .heading-decorator { background: linear-gradient(145deg, #60a5fa, #818cf8); box-shadow: 0 0 15px rgba(99, 102, 241, 0.2); }
+        html:not(.dark) .timeline-path { background: #e2e8f0; }
+        html:not(.dark) .timeline-path-progress { background: linear-gradient(to bottom, #60a5fa, #818cf8); }
+        html:not(.dark) .timeline-dot { background-color: #f8fafc; border-color: #cbd5e1; }
+        html:not(.dark) .skill-category { background: rgba(255, 255, 255, 0.8); box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        html:not(.dark) .skill-card { background: #fff; border: 1px solid #e2e8f0; }
+        html:not(.dark) .skill-card:hover { box-shadow: 0 0 20px rgba(99, 102, 241, 0.3); background-color: #fff; }
+        html:not(.dark) .project-card { background-color: #ffffff; box-shadow: 0 10px 20px rgba(0,0,0,0.1); border: none; }
+        html:not(.dark) .project-card:hover { box-shadow: 0 15px 30px rgba(99, 102, 241, 0.2); }
+        html:not(.dark) .project-card p { color: #475569; }
+        html:not(.dark) #contact-btn { color: #4f46e5; border-color: #6366f1; }
+        html:not(.dark) #contact-btn:hover { background-color: #6366f1; color: white; }
+        html:not(.dark) footer { background-color: #1e293b; }
+        html:not(.dark) ::-webkit-scrollbar-track { background: #e0e7ff; }
+        html:not(.dark) ::-webkit-scrollbar-thumb { background: linear-gradient(45deg, #60a5fa, #818cf8); }
+        html:not(.dark) #projects-wrapper { background-color: #f8fafc; }
 
-        /* --- UTILITY CLASSES (Consolidated for clarity) --- */
-        .content-section { background: rgba(255, 255, 255, 0.7); } /* Light transparent white */
-        .text-indigo-400 { color: #6366f1; }
-        .text-slate-500 { color: #64748b; }
-        .text-slate-600 { color: #475569; }
-        .text-slate-800 { color: #1e293b; }
-        #contact-btn {
-            color: #4f46e5; border: 2px solid #6366f1; border-radius: 9999px;
-            padding: 0.5rem 1.25rem; /* px-5 py-2 */
-            font-weight: 500;
-        }
-        #contact-btn:hover { background-color: #6366f1; color: white; transform: scale(1.05); }
     </style>
 </head>
 <body class="antialiased">
 
 <div id="dynamic-gradient-background"></div>
 
-<div id="preloader" class="fixed inset-0 z-[100] flex flex-col justify-center items-center bg-[#f0f4f8]">
-    <div class="w-20 h-20 border-4 border-dashed rounded-full animate-spin border-violet-500"></div>
-    <p class="mt-4 text-lg font-medium text-[#475569]">Calibrating the experience...</p>
+<div id="preloader" class="fixed inset-0 z-[100] flex flex-col justify-center items-center">
+    <div class="w-20 h-20 border-4 border-dashed rounded-full animate-spin"></div>
+    <p class="mt-4 text-lg font-medium">Calibrating the experience...</p>
 </div>
 
+<!-- Updated Custom Cursor Elements -->
 <div id="cursor-dot"></div>
 <div id="cursor-circle"></div>
-
-<div id="trust-node-container">
-    <canvas id="trust-node-canvas"></canvas>
-</div>
 
 <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 p-4">
     <div class="container mx-auto flex justify-between items-center">
         <a href="#" class="text-3xl font-bold text-slate-800 tracking-wide">HK.</a>
-        
-        <!-- Desktop Navigation Links -->
         <div class="hidden md:flex items-center space-x-8">
             <a href="#about" class="nav-link">About</a>
             <a href="#education" class="nav-link">Education</a>
@@ -195,20 +216,12 @@
             <a href="#skills" class="nav-link">Skills</a>
             <a href="#projects-wrapper" class="nav-link">Projects</a>
         </div>
-        
-        <!-- Icons and Contact Button -->
-        <div class="flex items-center space-x-6">
-            <a href="https://github.com/Hamizkhan08" target="_blank" rel="noopener noreferrer" class="nav-icon" aria-label="GitHub Profile" title="GitHub">
-                <i class="fab fa-github"></i>
-            </a>
-            <a href="#" target="_blank" rel="noopener noreferrer" class="nav-icon" aria-label="LinkedIn Profile" title="LinkedIn">
-                <i class="fab fa-linkedin"></i>
-            </a>
-            <a href="tel:+917083186153" id="contact-btn">Contact</a>
+        <div class="flex items-center space-x-4">
+            <button id="theme-toggle-btn" class="rounded-full flex items-center justify-center text-xl transition-all duration-300 transform hover:scale-110"><i class="fas fa-sun"></i><i class="fas fa-moon"></i></button>
+            <a href="tel:+917083186153" id="contact-btn" class="rounded-full px-5 py-2 font-medium transition-all duration-300 transform hover:scale-105">Contact</a>
         </div>
     </div>
 </nav>
-
 
 <main>
     <section id="hero" class="relative flex items-center h-screen py-32 md:py-64 z-10 overflow-hidden">
@@ -227,7 +240,8 @@
         </div>
     </section>
 
-    <section id="about" class="py-24 md:py-32 content-section z-10 observe-section">
+    <!-- Content sections remain the same -->
+    <section id="about" class="py-24 md:py-32 content-section z-10">
       <div class="container mx-auto px-4 md:px-8">
         <div class="section-heading-container mb-16">
             <div class="heading-decorator"></div>
@@ -246,8 +260,7 @@
         </div>
       </div>
     </section>
-    
-    <section id="education" class="py-24 md:py-32 content-section z-10 observe-section">
+    <section id="education" class="py-24 md:py-32 content-section z-10">
       <div class="container mx-auto px-4 md:px-8">
         <div class="section-heading-container mb-16">
             <div class="heading-decorator"></div>
@@ -260,8 +273,7 @@
         </div>
       </div>
     </section>
-
-    <section id="experience" class="py-24 md:py-32 content-section z-10 observe-section">
+    <section id="experience" class="py-24 md:py-32 content-section z-10">
       <div class="container mx-auto px-4 md:px-8">
         <div class="section-heading-container mb-16">
             <div class="heading-decorator"></div>
@@ -293,78 +305,94 @@
         </div>
       </div>
     </section>
-
-    <section id="skills" class="py-24 md:py-32 content-section z-10 observe-section">
+    <section id="skills" class="py-24 md:py-32 content-section z-10">
         <div class="container mx-auto px-4 md:px-8">
             <div class="section-heading-container mb-16">
                 <div class="heading-decorator"></div>
                 <h2 class="section-header text-4xl md:text-5xl font-bold text-slate-800">Skills & Technologies</h2>
             </div>
-            <div class="skills-container">
-                <div class="skills-grid">
-                    <div class="skill-card"><div class="skill-card-content"><img src="https://www.svgrepo.com/show/452091/python.svg" alt="Python"><span>Python</span></div></div>
-                    <div class="skill-card"><div class="skill-card-content"><img src="https://www.svgrepo.com/show/373473/c.svg" alt="C"><span>C</span></div></div>
-                    <div class="skill-card"><div class="skill-card-content"><img src="https://www.svgrepo.com/show/373528/cpp.svg" alt="C++"><span>C++</span></div></div>
-                    <div class="skill-card"><div class="skill-card-content"><img src="https://www.svgrepo.com/show/374093/sql.svg" alt="SQL"><span>SQL</span></div></div>
-                    <div class="skill-card"><div class="skill-card-content"><img src="https://www.svgrepo.com/show/349419/javascript.svg" alt="JavaScript"><span>JavaScript</span></div></div>
-                    <div class="skill-card"><div class="skill-card-content"><img src="https://www.svgrepo.com/show/452228/html-5.svg" alt="HTML"><span>HTML</span></div></div>
-                    <div class="skill-card"><div class="skill-card-content"><img src="https://www.svgrepo.com/show/452185/css-3.svg" alt="CSS"><span>CSS</span></div></div>
-                    <div class="skill-card"><div class="skill-card-content"><img src="https://www.svgrepo.com/show/349375/flask.svg" alt="Flask"><span>Flask</span></div></div>
-                    <div class="skill-card"><div class="skill-card-content"><img src="https://upload.wikimedia.org/wikipedia/commons/2/2d/Tensorflow_logo.svg" alt="TensorFlow"><span>TensorFlow</span></div></div>
-                    <div class="skill-card"><div class="skill-card-content"><img src="https://www.svgrepo.com/show/303493/scikit-learn-logo.svg" alt="Scikit-learn"><span>Scikit-learn</span></div></div>
-                    <div class="skill-card"><div class="skill-card-content"><img src="https://www.svgrepo.com/show/373941/pandas.svg" alt="Pandas"><span>Pandas</span></div></div>
-                    <div class="skill-card"><div class="skill-card-content"><img src="https://www.svgrepo.com/show/373884/numpy.svg" alt="NumPy"><span>NumPy</span></div></div>
-                    <div class="skill-card"><div class="skill-card-content"><img src="https://www.svgrepo.com/show/452210/git.svg" alt="Git"><span>Git</span></div></div>
-                    <div class="skill-card"><div class="skill-card-content"><img src="https://www.svgrepo.com/show/373848/mysql.svg" alt="MySQL"><span>MySQL</span></div></div>
-                    <div class="skill-card"><div class="skill-card-content"><img src="https://www.svgrepo.com/show/374171/vscode.svg" alt="VS Code"><span>VS Code</span></div></div>
-                    <div class="skill-card"><div class="skill-card-content"><img src="https://www.svgrepo.com/show/353959/jupyter.svg" alt="Jupyter"><span>Jupyter</span></div></div>
-                    <div class="skill-card"><div class="skill-card-content"><img src="https://www.svgrepo.com/show/511343/llm.svg" alt="LLMs"><span>LLMs</span></div></div>
+            <div class="space-y-12">
+                <div class="skill-category">
+                    <h3>Languages</h3>
+                    <div class="skills-grid">
+                        <div class="skill-card"><img src="https://www.svgrepo.com/show/452091/python.svg" alt="Python"><span>Python</span></div>
+                        <div class="skill-card"><img src="https://www.svgrepo.com/show/373473/c.svg" alt="C"><span>C</span></div>
+                        <div class="skill-card"><img src="https://www.svgrepo.com/show/373528/cpp.svg" alt="C++"><span>C++</span></div>
+                        <div class="skill-card"><img src="https://www.svgrepo.com/show/374093/sql.svg" alt="SQL"><span>SQL</span></div>
+                        <div class="skill-card"><img src="https://www.svgrepo.com/show/349419/javascript.svg" alt="JavaScript"><span>JavaScript</span></div>
+                        <div class="skill-card"><img src="https://www.svgrepo.com/show/452228/html-5.svg" alt="HTML"><span>HTML</span></div>
+                        <div class="skill-card"><img src="https://www.svgrepo.com/show/452185/css-3.svg" alt="CSS"><span>CSS</span></div>
+                    </div>
+                </div>
+                <div class="skill-category">
+                    <h3>Frameworks & Libraries</h3>
+                     <div class="skills-grid">
+                        <div class="skill-card"><img src="https://www.svgrepo.com/show/349375/flask.svg" alt="Flask"><span>Flask</span></div>
+                        <div class="skill-card"><img src="https://upload.wikimedia.org/wikipedia/commons/2/2d/Tensorflow_logo.svg" alt="TensorFlow"><span>TensorFlow</span></div>
+                        <div class="skill-card"><img src="https://www.svgrepo.com/show/303493/scikit-learn-logo.svg" alt="Scikit-learn"><span>Scikit-learn</span></div>
+                        <div class="skill-card"><img src="https://www.svgrepo.com/show/373941/pandas.svg" alt="Pandas"><span>Pandas</span></div>
+                        <div class="skill-card"><img src="https://www.svgrepo.com/show/373884/numpy.svg" alt="NumPy"><span>NumPy</span></div>
+                    </div>
+                </div>
+                <div class="skill-category">
+                    <h3>Tools & Technologies</h3>
+                    <div class="skills-grid">
+                        <div class="skill-card"><img src="https://www.svgrepo.com/show/452210/git.svg" alt="Git"><span>Git</span></div>
+                        <div class="skill-card"><img src="https://www.svgrepo.com/show/373848/mysql.svg" alt="MySQL"><span>MySQL</span></div>
+                        <div class="skill-card"><img src="https://www.svgrepo.com/show/374171/vscode.svg" alt="VS Code"><span>VS Code</span></div>
+                        <div class="skill-card"><img src="https://www.svgrepo.com/show/353959/jupyter.svg" alt="Jupyter"><span>Jupyter</span></div>
+                        <div class="skill-card"><img src="https://www.svgrepo.com/show/511343/llm.svg" alt="LLMs"><span>LLMs</span></div>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <div id="projects-wrapper" class="observe-section">
+  <!-- IMPROVED PROJECT SECTION STRUCTURE -->
+    <div id="projects-wrapper" class="relative z-">
+        <!-- Static header, does not scroll horizontally -->
         <div id="projects-header">
             <div class="section-heading-container justify-center mb-4">
                  <div class="heading-decorator"></div>
-                <h2 class="section-header text-4xl md:text-5xl font-bold text-slate-800 mb-2">Featured Projects</h2>
+                 <h2 class="section-header text-4xl md:text-5xl font-bold text-slate-800">Featured Projects</h2>
             </div>
-            <p class="text-slate-500 text-lg">A selection of my work, each showcasing a unique challenge and a creative, data-driven solution. Scroll horizontally to explore.</p>
+            <p class="text-slate-500 text-lg">Scroll to explore a selection of my work. Each project showcases a unique challenge and a creative, data-driven solution.</p>
         </div>
-        <div id="projects-scroll-container">
-            <div class="projects-grid">
-                <a href="#" class="project-card"><div class="project-card-image-wrapper"><img src="https://raw.githubusercontent.com/Hamizkhan08/project-showcase/main/final.png" alt="Fitness & Nutrition Recommender"></div><div class="project-card-content"><h3>Fitness & Nutrition Recommender</h3><p class="description">A web application that generates personalized diet and workout plans using a Random Forest model.</p><div class="tech-stack-container"><h4 class="tech-stack-title">Tech Stack</h4><div class="tech-stack-icons"><img src="https://www.svgrepo.com/show/452091/python.svg" title="Python"><img src="https://www.svgrepo.com/show/349375/flask.svg" title="Flask"><img src="https://www.svgrepo.com/show/303493/scikit-learn-logo.svg" title="Scikit-learn"></div></div></div></a>
-                <a href="#" class="project-card"><div class="project-card-image-wrapper"><img src="https://raw.githubusercontent.com/Hamizkhan08/project-showcase/main/miss.png" alt="Missing Person Matcher"></div><div class="project-card-content"><h3>Missing Person Matcher</h3><p class="description">A facial recognition tool to accelerate identifying missing persons in disaster response scenarios.</p><div class="tech-stack-container"><h4 class="tech-stack-title">Tech Stack</h4><div class="tech-stack-icons"><img src="https://www.svgrepo.com/show/452091/python.svg" title="Python"></div></div></div></a>
-                <a href="#" class="project-card"><div class="project-card-image-wrapper"><img src="https://raw.githubusercontent.com/Hamizkhan08/project-showcase/main/mapp.png" alt="YouTube to 3D Mind Map"></div><div class="project-card-content"><h3>YouTube to 3D Mind Map</h3><p class="description">An AI tool that transcribes YouTube content and visualizes it as an interactive 3D mind map.</p><div class="tech-stack-container"><h4 class="tech-stack-title">Tech Stack</h4><div class="tech-stack-icons"><img src="https://www.svgrepo.com/show/452091/python.svg" title="Python"></div></div></div></a>
-                <a href="#" class="project-card"><div class="project-card-image-wrapper"><img src="https://raw.githubusercontent.com/Hamizkhan08/project-showcase/main/job.png" alt="Job Resume Classifier"></div><div class="project-card-content"><h3>Job Resume Classifier</h3><p class="description">An ML application that classifies resumes into job categories using Natural Language Processing.</p><div class="tech-stack-container"><h4 class="tech-stack-title">Tech Stack</h4><div class="tech-stack-icons"><img src="https://www.svgrepo.com/show/452091/python.svg" title="Python"></div></div></div></a>
-                <a href="#" class="project-card"><div class="project-card-image-wrapper"><img src="https://raw.githubusercontent.com/Hamizkhan08/project-showcase/main/Screenshot%202025-06-20%20121225.png" alt="ATM Cash Predictor"></div><div class="project-card-content"><h3>ATM Cash Predictor</h3><p class="description">This model predicts potential ATM cash shortages by analyzing historical data, enabling proactive alerts.</p><div class="tech-stack-container"><h4 class="tech-stack-title">Tech Stack</h4><div class="tech-stack-icons"><img src="https://www.svgrepo.com/show/452091/python.svg" title="Python"></div></div></div></a>
-                <a href="https://github.com/Hamizkhan08" class="project-card"><div class="project-card-image-wrapper"><img src="https://raw.githubusercontent.com/Hamizkhan08/project-showcase/main/Screenshot%202024-06-25%20112811.png" alt="More on GitHub"></div><div class="project-card-content"><h3>And Many More...</h3><p class="description">Explore my GitHub to see the full range of my work, including scripts and open-source contributions.</p><div class="tech-stack-container"><h4 class="tech-stack-title">Platforms</h4><div class="tech-stack-icons"><img src="https://www.svgrepo.com/show/452210/git.svg" title="Git"><i class="fab fa-github" title="GitHub"></i></div></div></div></a>
+
+        <!-- Container that gets pinned for horizontal scroll -->
+        <section id="projects">
+            <div id="projects-container">
+                <div class="projects-grid">
+                    <a href="#" class="project-card"><img src="https://raw.githubusercontent.com/Hamizkhan08/project-showcase/main/final.png" alt="Fitness & Nutrition Recommender"><div class="p-6"><h3 class="text-slate-800">Fitness & Nutrition Recommender</h3><p>Web app generating personalized diet and workout plans via Random Forest.</p></div></a>
+                    <a href="#" class="project-card"><img src="https://raw.githubusercontent.com/Hamizkhan08/project-showcase/main/miss.png" alt="Missing Person Matcher"><div class="p-6"><h3 class="text-slate-800">Missing Person Matcher</h3><p>Facial recognition tool for identifying missing persons in disaster response.</p></div></a>
+                    <a href="#" class="project-card"><img src="https://raw.githubusercontent.com/Hamizkhan08/project-showcase/main/mapp.png" alt="YouTube to 3D Mind Map Generator"><div class="p-6"><h3 class="text-slate-800">YouTube to 3D Mind Map</h3><p>AI-powered tool to visualize video transcripts as interactive 3D mind maps.</p></div></a>
+                    <a href="#" class="project-card"><img src="https://raw.githubusercontent.com/Hamizkhan08/project-showcase/main/job.png" alt="Job Resume Classifier"><div class="p-6"><h3 class="text-slate-800">Job Resume Classifier</h3><p>ML app to classify resumes into job roles using NLP.</p></div></a>
+                    <a href="#" class="project-card"><img src="https://raw.githubusercontent.com/Hamizkhan08/project-showcase/main/Screenshot%202025-06-20%20121225.png" alt="ATM Cash Run-Out Predictor"><div class="p-6"><h3 class="text-slate-800">ATM Cash Predictor</h3><p>Predicts cash shortages using historical data for proactive bank alerts.</p></div></a>
+                    <a href="https://github.com/Hamizkhan08" class="project-card"><img src="https://raw.githubusercontent.com/Hamizkhan08/project-showcase/main/Screenshot%202024-06-25%20112811.png" alt="More Projects"><div class="p-6"><h3 class="text-slate-800">And Many More...</h3><p>Explore my GitHub to see the full range of my work and contributions.</p></div></a>
+                </div>
             </div>
-        </div>
+        </section>
     </div>
 </main>
 
-<footer id="main-footer">
-    <div class="container mx-auto">
-        <div class="footer-content">
-            <div class="footer-logo">HK.</div>
-            <p class="footer-text">Driven by curiosity and a passion for building. Let's create something amazing together.</p>
-            <div class="social-links">
-                <a href="https://github.com/Hamizkhan08" target="_blank" rel="noopener noreferrer" aria-label="GitHub Profile" title="GitHub"><i class="fab fa-github"></i></a>
-                <a href="#" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn Profile" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
-                <a href="mailto:hamizkhandbg@gmail.com" aria-label="Email Me" title="Email Me"><i class="fas fa-envelope"></i></a>
-            </div>
-            <p class="copyright">© 2024 Hamiz Khan. All rights reserved.</p>
-        </div>
+<footer class="py-24 z-10 relative">
+  <div class="container mx-auto px-6 lg:px-8 text-center">
+    <h2 class="text-4xl md:text-6xl font-bold">Let's Build Together</h2>
+    <p class="text-lg text-slate-300 mt-4 max-w-xl mx-auto">Have a project in mind or an opportunity to discuss? I'd love to hear from you.</p>
+    <a href="mailto:hamizk986@gmail.com" class="mt-10 inline-block bg-gray-200 text-gray-800 font-bold py-4 px-10 rounded-full text-xl hover:bg-white transition-colors duration-300 transform hover:scale-105">Get In Touch</a>
+    <div class="flex justify-center space-x-8 mt-16 text-3xl text-slate-400">
+      <a href="https://github.com/Hamizkhan08" target="_blank" class="hover:text-white transition-transform duration-300 transform hover:scale-110"><i class="fab fa-github"></i></a>
+      <a href="https://linkedin.com/in/hamiz-khan-2b5866215" target="_blank" class="hover:text-white transition-transform duration-300 transform hover:scale-110"><i class="fab fa-linkedin"></i></a>
     </div>
+    <p class="mt-16 text-sm text-slate-500">© 2025 Hamiz Khan.<br> hamizk986@gmail.com </p>
+  </div>
 </footer>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     gsap.registerPlugin(ScrollTrigger);
     
-    // Preloader
+    // --- Preloader ---
     window.addEventListener('load', () => {
         gsap.to('#preloader', { opacity: 0, duration: 0.8, onComplete: () => {
             document.getElementById('preloader').style.display = 'none';
@@ -374,42 +402,57 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     function initPage() {
+        initTheme();
         initNavbar();
+        if (window.innerWidth > 768) {
+            initHero3D();
+        }
         initCustomCursor();
         initScrollAnimations();
         initTextAnimations();
-        // Initialize 3D elements only if screen size permits
-        if (window.innerWidth > 768) initHero3D();
-        if (window.innerWidth > 1024) initTrustNode3D();
     }
     
+    // --- Theme Management ---
+    function initTheme() {
+        const themeToggleBtn = document.getElementById('theme-toggle-btn');
+        themeToggleBtn.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+        });
+    }
+
+    // --- Navbar Scroll Effect ---
     function initNavbar() {
         const navbar = document.getElementById('navbar');
         window.addEventListener('scroll', () => navbar.classList.toggle('navbar-scrolled', window.scrollY > 50));
     }
 
+    // --- 3D Hero Object ---
     function initHero3D() {
         const container = document.getElementById('hero-3d-container');
-        if (!container) return; // Exit if container doesn't exist (e.g., on mobile)
+        if (!container) return;
 
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
         camera.position.z = 3.5;
+        
         const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('hero-3d-canvas'), alpha: true, antialias: true });
         renderer.setSize(container.clientWidth, container.clientHeight);
         
-        // Updated color to match light theme's indigo
         const geometry = new THREE.TorusKnotGeometry(1, 0.3, 128, 16);
-        const material = new THREE.MeshStandardMaterial({ color: 0x6366f1, metalness: 0.6, roughness: 0.4 });
+        const material = new THREE.MeshStandardMaterial({ 
+            color: 0xa78bfa,
+            metalness: 0.6, 
+            roughness: 0.4 
+        });
         const model = new THREE.Mesh(geometry, material);
         scene.add(model);
-
+        
         const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
         scene.add(ambientLight);
         const pointLight = new THREE.PointLight(0xffffff, 1);
         pointLight.position.set(5, 5, 5);
         scene.add(pointLight);
-
+        
         let mouse = new THREE.Vector2();
         document.addEventListener('mousemove', e => {
             mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
@@ -417,14 +460,11 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         window.addEventListener('resize', () => {
-            // Check if container is still valid and has dimensions
-            if (container && container.clientWidth > 0 && container.clientHeight > 0) {
-                camera.aspect = container.clientWidth / container.clientHeight;
-                camera.updateProjectionMatrix();
-                renderer.setSize(container.clientWidth, container.clientHeight);
-            }
+            camera.aspect = container.clientWidth / container.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(container.clientWidth, container.clientHeight);
         });
-
+        
         function animate() {
             requestAnimationFrame(animate);
             gsap.to(model.rotation, { y: mouse.x * 0.8, x: -mouse.y * 0.8, duration: 2, ease: 'power2.out' });
@@ -432,91 +472,72 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         animate();
     }
-
-    function initTrustNode3D() {
-        const container = document.getElementById('trust-node-container');
-        if (!container) return; // Exit if container doesn't exist (e.g., on mobile/tablet)
-
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
-        camera.position.z = 2;
-        const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('trust-node-canvas'), alpha: true, antialias: true });
-        renderer.setSize(container.clientWidth, container.clientHeight);
-        
-        // Retaining violet for trust node as it's a good accent
-        const geometry = new THREE.IcosahedronGeometry(1, 0);
-        const material = new THREE.MeshStandardMaterial({ color: 0x8b5cf6, metalness: 0.7, roughness: 0.3, flatShading: true });
-        const model = new THREE.Mesh(geometry, material);
-        scene.add(model);
-
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
-        scene.add(ambientLight);
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-        directionalLight.position.set(5, 5, 5);
-        scene.add(directionalLight);
-        
-        gsap.to(model.rotation, {
-            x: Math.PI * 2, y: Math.PI * 1.5, ease: "none",
-            scrollTrigger: { trigger: "body", start: "top top", end: "bottom bottom", scrub: 1.5, }
-        });
-        
-        let mouse = new THREE.Vector2();
-        document.addEventListener('mousemove', e => {
-            mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
-            mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
-        });
-        
-        function animate() {
-            requestAnimationFrame(animate);
-            model.rotation.z += 0.002;
-            gsap.to(model.rotation, { 
-                y: model.rotation.y + (mouse.x * 0.5), x: model.rotation.x + (-mouse.y * 0.5), 
-                duration: 2, ease: 'power2.out' 
-            });
-            renderer.render(scene, camera);
-        }
-        animate();
-    }
     
+    // --- ENHANCED Custom Cursor ---
     function initCustomCursor() {
         const cursorDot = document.getElementById('cursor-dot');
         const cursorCircle = document.getElementById('cursor-circle');
+        
+        let dotX = 0, dotY = 0;
+        let circleX = 0, circleY = 0;
+
         window.addEventListener('mousemove', e => {
-            gsap.to(cursorDot, { x: e.clientX, y: e.clientY, duration: 0.3, ease: "power2.out" });
-            gsap.to(cursorCircle, { x: e.clientX - 20, y: e.clientY - 20, duration: 0.7, ease: "power2.out" });
+            dotX = e.clientX;
+            dotY = e.clientY;
+            
+            // GSAP provides smoother, more reliable animations
+            gsap.to(cursorDot, { x: dotX, y: dotY, duration: 0.3, ease: "power2.out" });
+            gsap.to(cursorCircle, { x: dotX - 20, y: dotY - 20, duration: 0.7, ease: "power2.out" }); // Offset for centering
         });
+
+        // Add/remove hover class for interactive elements
         document.querySelectorAll('a, button, .project-card, .timeline-item, .skill-card').forEach(el => {
             el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
             el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
         });
     }
 
+    // --- GENERAL SCROLL-TRIGGERED ANIMATIONS ---
     function initScrollAnimations() {
-        gsap.utils.toArray('.observe-section').forEach(section => {
-            gsap.from(section, { opacity: 0, y: 60, duration: 1, ease: 'power3.out', scrollTrigger: { trigger: section, start: 'top 85%', toggleActions: 'play none none none' } });
+        // Vertical Timeline Animation
+        gsap.utils.toArray('.timeline-item').forEach(item => {
+            gsap.from(item, {
+                opacity: 0, y: 50, duration: 0.6,
+                scrollTrigger: { trigger: item, start: "top 85%" }
+            });
         });
-        gsap.to('.timeline-path-progress', { height: "100%", scrollTrigger: { trigger: '.timeline-path', start: "top center", end: "bottom center", scrub: 1 } });
-        gsap.to('.skill-card', { opacity: 1, y: 0, stagger: 0.05, duration: 0.5, ease: 'power2.out', scrollTrigger: { trigger: '.skills-grid', start: 'top 80%' } });
-        
-        const projectsContainer = document.getElementById('projects-scroll-container');
-        if(projectsContainer) {
-            projectsContainer.addEventListener('wheel', function(e) {
-                // Check if scroll is primarily vertical and not already at the horizontal end
-                if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-                    const isScrollingDown = e.deltaY > 0;
-                    const isAtEnd = this.scrollLeft + this.clientWidth >= this.scrollWidth - 15; // 15px buffer
-                    const isAtStart = this.scrollLeft <= 15; // 15px buffer
+        gsap.to('.timeline-path-progress', {
+            height: "100%",
+            scrollTrigger: { trigger: '.timeline-path', start: "top center", end: "bottom center", scrub: 1 }
+        });
 
-                    // Prevent default vertical scroll ONLY if within horizontal scroll bounds
-                    if ((isScrollingDown && !isAtEnd) || (!isScrollingDown && !isAtStart)) {
-                        e.preventDefault();
-                        this.scrollLeft += e.deltaY * 0.7; // Adjust multiplier for scroll speed
-                    }
+        // Skill Cards Fade-in Animation
+        gsap.utils.toArray('.skill-category').forEach(category => {
+            gsap.to(category.querySelectorAll('.skill-card'), {
+                opacity: 1, y: 0, scale: 1,
+                stagger: 0.08, duration: 0.6, ease: 'power3.out',
+                scrollTrigger: { trigger: category, start: 'top 80%', }
+            });
+        });
+
+        // Projects Horizontal Scroll Animation
+        const projectsGrid = document.querySelector(".projects-grid");
+        if (projectsGrid && window.innerWidth > 768) { // Only run on larger screens
+            const horizontalScrollLength = projectsGrid.scrollWidth - window.innerWidth;
+            gsap.to(projectsGrid, {
+                x: -horizontalScrollLength,
+                ease: "none",
+                scrollTrigger: {
+                    trigger: "#projects-container", // Pin the container
+                    pin: true,
+                    scrub: 1.5,
+                    end: () => "+=" + horizontalScrollLength
                 }
-            }, { passive: false }); // passive: false is crucial for preventDefault
+            });
         }
     }
     
+    // --- TEXT ANIMATIONS ---
     function initTextAnimations() {
         gsap.fromTo('.hero-element h1 span', { y: '100%', opacity: 0 }, { y: '0%', opacity: 1, stagger: 0.1, duration: 1.2, ease: 'power3.out', delay: 0.5 });
         gsap.fromTo('.hero-element p', { y: '50%', opacity: 0 }, { y: '0%', opacity: 1, duration: 1, ease: 'power3.out', delay: 1 });
@@ -524,20 +545,35 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.section-heading-container').forEach((elem) => {
             const header = elem.querySelector('.section-header');
             const decorator = elem.querySelector('.heading-decorator');
-            const triggerConfig = { trigger: elem, start: 'top 85%', toggleActions: 'play none none none' };
-            gsap.from(decorator, { scaleY: 0, transformOrigin: 'bottom', duration: 0.8, ease: 'power3.out', scrollTrigger: triggerConfig });
-            if (header && !header.classList.contains('animated')) {
-                header.classList.add('animated');
+            
+            gsap.from(decorator, {
+                scaleY: 0, transformOrigin: 'bottom', duration: 0.8, ease: 'power3.out',
+                scrollTrigger: { trigger: elem, start: 'top 85%', toggleActions: 'play none none none' }
+            });
+            
+            if (header) {
                 const text = header.textContent; header.innerHTML = '';
                 text.split('').forEach(char => {
                     const span = document.createElement('span');
                     span.className = 'char';
                     span.style.display = 'inline-block';
-                    span.textContent = char === ' ' ? '\u00A0' : char; // Preserve space
+                    span.textContent = char === ' ' ? '\u00A0' : char;
                     header.appendChild(span);
                 });
-                gsap.fromTo(header.querySelectorAll('.char'), { y: '100%', opacity: 0 }, { y: '0%', opacity: 1, stagger: 0.03, duration: 0.8, ease: 'power3.out', scrollTrigger: triggerConfig });
+
+                gsap.fromTo(header.querySelectorAll('.char'),
+                    { y: '100%', opacity: 0 },
+                    { y: '0%', opacity: 1, stagger: 0.03, duration: 0.8, ease: 'power3.out',
+                        scrollTrigger: { trigger: elem, start: 'top 85%', toggleActions: 'play none none none' }
+                    }
+                );
             }
+        });
+        
+        // Add a fade-in for the new projects header
+        gsap.from("#projects-header", {
+            opacity: 0, y: 40, duration: 0.8,
+            scrollTrigger: { trigger: "#projects-header", start: "top 85%" }
         });
     }
 });
