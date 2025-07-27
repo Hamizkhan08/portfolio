@@ -94,26 +94,72 @@
         .skill-card img { height: 40px; width: 40px; transition: transform 0.4s ease; }
         .skill-card span { margin-top: 0.75rem; font-weight: 500; font-size: 0.875rem; text-align: center; }
 
+        
+        /* project card */
+
         /* --- IMPROVED PROJECTS SECTION --- */
-        #projects-wrapper { padding: 10vh 0; }
-        #projects-header {
-            max-width: 450px; /* Limit width of the header text */
-            margin: 0 auto 5rem auto; /* Center and provide bottom margin */
-            text-align: center;
-            padding: 0 1rem;
-        }
-        #projects { overflow: hidden; } 
-        #projects-container { height: 100vh; align-items: center; padding: 0 !important; }
-        .projects-grid { display: flex; width: max-content; gap: 2.5rem; padding: 0 5vw; }
-        .project-card {
-            flex: 0 0 360px; overflow: hidden; border-radius: 1rem;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .project-card:hover { transform: translateY(-10px) scale(1.03); filter: brightness(1.1); }
-        .project-card img { width: 100%; height: 15rem; object-fit: cover; transition: transform 0.4s ease; }
-        .project-card:hover img { transform: scale(1.05); }
-        .project-card .p-6 { padding: 1.5rem; }
-        .project-card h3 { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem; }
+#projects-wrapper { padding: 10vh 0; }
+#projects-header {
+    max-width: 450px;
+    margin: 0 auto 5rem auto;
+    text-align: center;
+    padding: 0 1rem;
+}
+
+#projects-container {
+    height: auto;
+    padding: 4rem 0;
+    position: relative;
+}
+
+.projects-grid {
+    display: flex;
+    gap: 2.5rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding: 0 80px;
+    width: 100%;
+}
+
+.projects-grid::-webkit-scrollbar {
+    display: none;
+}
+
+.project-card {
+    flex: 0 0 360px;
+    overflow: hidden;
+    border-radius: 1rem;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.project-card:hover { 
+    transform: translateY(-10px) scale(1.03); 
+    filter: brightness(1.1); 
+}
+
+.project-card img { 
+    width: 100%; 
+    height: 15rem; 
+    object-fit: cover; 
+    transition: transform 0.4s ease; 
+}
+
+.project-card:hover img { 
+    transform: scale(1.05); 
+}
+
+.project-card .p-6 { 
+    padding: 1.5rem; 
+}
+
+.project-card h3 { 
+    font-size: 1.25rem; 
+    font-weight: 700; 
+    margin-bottom: 0.5rem; 
+}
 
         /* --- DARK MODE (DEFAULT GRAYSCALE) --- */
         html.dark body { color: #e5e7eb; }
@@ -190,6 +236,80 @@
         html:not(.dark) ::-webkit-scrollbar-track { background: #e0e7ff; }
         html:not(.dark) ::-webkit-scrollbar-thumb { background: linear-gradient(45deg, #60a5fa, #818cf8); }
         html:not(.dark) #projects-wrapper { background-color: #f8fafc; }
+        /* Add these new styles for project navigation */
+.project-nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 10;
+}
+
+.project-nav-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-50%) scale(1.1);
+}
+
+.project-nav-btn.prev {
+    left: 20px;
+}
+
+.project-nav-btn.next {
+    right: 20px;
+}
+
+/* Update projects container for manual scroll */
+#projects-container {
+    height: auto;
+    padding: 4rem 0;
+}
+
+.projects-grid {
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding: 0 80px; /* Space for arrows */
+}
+
+.projects-grid::-webkit-scrollbar {
+    display: none;
+}
+
+/* Dark mode styles for navigation buttons */
+html.dark .project-nav-btn {
+    background: rgba(45, 55, 72, 0.8);
+    border-color: rgba(160, 174, 192, 0.3);
+    color: #e2e8f0;
+}
+
+html.dark .project-nav-btn:hover {
+    background: rgba(45, 55, 72, 0.95);
+}
+
+/* Light mode styles for navigation buttons */
+html:not(.dark) .project-nav-btn {
+    background: rgba(248, 250, 252, 0.8);
+    border-color: rgba(99, 102, 241, 0.3);
+    color: #4f46e5;
+}
+
+html:not(.dark) .project-nav-btn:hover {
+    background: rgba(248, 250, 252, 0.95);
+}
 
     </style>
 </head>
@@ -349,42 +469,50 @@
     </section>
 
   <!-- IMPROVED PROJECT SECTION STRUCTURE -->
-    <div id="projects-wrapper" class="relative z-">
-        <!-- Static header, does not scroll horizontally -->
-        <div id="projects-header">
-            <div class="section-heading-container justify-center mb-4">
-                 <div class="heading-decorator"></div>
-                 <h2 class="section-header text-4xl md:text-5xl font-bold text-slate-800">Featured Projects</h2>
-            </div>
-            <p class="text-slate-500 text-lg">Scroll to explore a selection of my work. Each project showcases a unique challenge and a creative, data-driven solution.</p>
+    <div id="projects-wrapper" class="relative z-10">
+    <!-- Static header, does not scroll horizontally -->
+    <div id="projects-header">
+        <div class="section-heading-container justify-center mb-4">
+             <div class="heading-decorator"></div>
+             <h2 class="section-header text-4xl md:text-5xl font-bold text-slate-800">Featured Projects</h2>
         </div>
-
-        <!-- Container that gets pinned for horizontal scroll -->
-        <section id="projects">
-            <div id="projects-container">
-                <div class="projects-grid">
-                    <a href="#" class="project-card"><img src="https://raw.githubusercontent.com/Hamizkhan08/project-showcase/main/final.png" alt="Fitness & Nutrition Recommender"><div class="p-6"><h3 class="text-slate-800">Fitness & Nutrition Recommender</h3><p>Web app generating personalized diet and workout plans via Random Forest.</p></div></a>
-                    <a href="#" class="project-card"><img src="https://raw.githubusercontent.com/Hamizkhan08/project-showcase/main/miss.png" alt="Missing Person Matcher"><div class="p-6"><h3 class="text-slate-800">Missing Person Matcher</h3><p>Facial recognition tool for identifying missing persons in disaster response.</p></div></a>
-                    <a href="#" class="project-card"><img src="https://raw.githubusercontent.com/Hamizkhan08/project-showcase/main/mapp.png" alt="YouTube to 3D Mind Map Generator"><div class="p-6"><h3 class="text-slate-800">YouTube to 3D Mind Map</h3><p>AI-powered tool to visualize video transcripts as interactive 3D mind maps.</p></div></a>
-                    <a href="#" class="project-card"><img src="https://raw.githubusercontent.com/Hamizkhan08/project-showcase/main/job.png" alt="Job Resume Classifier"><div class="p-6"><h3 class="text-slate-800">Job Resume Classifier</h3><p>ML app to classify resumes into job roles using NLP.</p></div></a>
-                    <a href="#" class="project-card"><img src="https://raw.githubusercontent.com/Hamizkhan08/project-showcase/main/Screenshot%202025-06-20%20121225.png" alt="ATM Cash Run-Out Predictor"><div class="p-6"><h3 class="text-slate-800">ATM Cash Predictor</h3><p>Predicts cash shortages using historical data for proactive bank alerts.</p></div></a>
-                    <a href="https://github.com/Hamizkhan08" class="project-card"><img src="https://raw.githubusercontent.com/Hamizkhan08/project-showcase/main/Screenshot%202024-06-25%20112811.png" alt="More Projects"><div class="p-6"><h3 class="text-slate-800">And Many More...</h3><p>Explore my GitHub to see the full range of my work and contributions.</p></div></a>
-                </div>
-            </div>
-        </section>
+        <p class="text-slate-500 text-lg">Use the arrow buttons to explore my projects. Each showcases a unique challenge and creative solution.</p>
     </div>
+
+    <!-- Container with navigation arrows -->
+    <section id="projects">
+        <div id="projects-container" class="relative">
+            <!-- Navigation Arrows -->
+            <button class="project-nav-btn prev" id="prev-btn">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="project-nav-btn next" id="next-btn">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+            
+            <div class="projects-grid">
+                <a href="#" class="project-card"><img src="https://raw.githubusercontent.com/Hamizkhan08/project-showcase/main/final.png" alt="Fitness & Nutrition Recommender"><div class="p-6"><h3 class="text-slate-800">Fitness & Nutrition Recommender</h3><p>Web app generating personalized diet and workout plans via Random Forest.</p></div></a>
+                <a href="#" class="project-card"><img src="https://raw.githubusercontent.com/Hamizkhan08/project-showcase/main/miss.png" alt="Missing Person Matcher"><div class="p-6"><h3 class="text-slate-800">Missing Person Matcher</h3><p>Facial recognition tool for identifying missing persons in disaster response.</p></div></a>
+                <a href="#" class="project-card"><img src="https://raw.githubusercontent.com/Hamizkhan08/project-showcase/main/mapp.png" alt="YouTube to 3D Mind Map Generator"><div class="p-6"><h3 class="text-slate-800">YouTube to 3D Mind Map</h3><p>AI-powered tool to visualize video transcripts as interactive 3D mind maps.</p></div></a>
+                <a href="#" class="project-card"><img src="https://raw.githubusercontent.com/Hamizkhan08/project-showcase/main/job.png" alt="Job Resume Classifier"><div class="p-6"><h3 class="text-slate-800">Job Resume Classifier</h3><p>ML app to classify resumes into job roles using NLP.</p></div></a>
+                <a href="#" class="project-card"><img src="https://raw.githubusercontent.com/Hamizkhan08/project-showcase/main/Screenshot%202025-06-20%20121225.png" alt="ATM Cash Run-Out Predictor"><div class="p-6"><h3 class="text-slate-800">ATM Cash Predictor</h3><p>Predicts cash shortages using historical data for proactive bank alerts.</p></div></a>
+                <a href="https://github.com/Hamizkhan08" class="project-card"><img src="https://raw.githubusercontent.com/Hamizkhan08/project-showcase/main/Screenshot%202024-06-25%20112811.png" alt="More Projects"><div class="p-6"><h3 class="text-slate-800">And Many More...</h3><p>Explore my GitHub to see the full range of my work and contributions.</p></div></a>
+            </div>
+        </div>
+    </section>
+</div>
 </main>
 
 <footer class="py-24 z-10 relative">
   <div class="container mx-auto px-6 lg:px-8 text-center">
     <h2 class="text-4xl md:text-6xl font-bold">Let's Build Together</h2>
     <p class="text-lg text-slate-300 mt-4 max-w-xl mx-auto">Have a project in mind or an opportunity to discuss? I'd love to hear from you.</p>
-    <a href="mailto:hamiz.afkhan@gmail.com" class="mt-10 inline-block bg-gray-200 text-gray-800 font-bold py-4 px-10 rounded-full text-xl hover:bg-white transition-colors duration-300 transform hover:scale-105">Get In Touch</a>
+    <a href="https://www.linkedin.com/in/hamiz-khan-2b5866215/" class="mt-10 inline-block bg-gray-200 text-gray-800 font-bold py-4 px-10 rounded-full text-xl hover:bg-white transition-colors duration-300 transform hover:scale-105">Get In Touch</a>
     <div class="flex justify-center space-x-8 mt-16 text-3xl text-slate-400">
       <a href="https://github.com/Hamizkhan08" target="_blank" class="hover:text-white transition-transform duration-300 transform hover:scale-110"><i class="fab fa-github"></i></a>
       <a href="https://linkedin.com/in/hamiz-khan-2b5866215" target="_blank" class="hover:text-white transition-transform duration-300 transform hover:scale-110"><i class="fab fa-linkedin"></i></a>
     </div>
-    <p class="mt-16 text-sm text-slate-500">© 2025 Hamiz Khan.<br> hamizk986@gmail.com </p>
+    <p class="mt-16 text-sm text-slate-500">© 2025 Hamiz Khan.<br> hamiz.afkhan@gmail.com </p>
   </div>
 </footer>
 
@@ -410,6 +538,7 @@ document.addEventListener('DOMContentLoaded', function() {
         initCustomCursor();
         initScrollAnimations();
         initTextAnimations();
+         initProjectNavigation();
     }
     
     // --- Theme Management ---
@@ -518,25 +647,38 @@ document.addEventListener('DOMContentLoaded', function() {
                 stagger: 0.08, duration: 0.6, ease: 'power3.out',
                 scrollTrigger: { trigger: category, start: 'top 80%', }
             });
-        });
+        });}
 
         // Projects Horizontal Scroll Animation
-        const projectsGrid = document.querySelector(".projects-grid");
-        if (projectsGrid && window.innerWidth > 768) { // Only run on larger screens
-            const horizontalScrollLength = projectsGrid.scrollWidth - window.innerWidth;
-            gsap.to(projectsGrid, {
-                x: -horizontalScrollLength,
-                ease: "none",
-                scrollTrigger: {
-                    trigger: "#projects-container", // Pin the container
-                    pin: true,
-                    scrub: 1.5,
-                    end: () => "+=" + horizontalScrollLength
-                }
-            });
-        }
+        // Add this new function AFTER initScrollAnimations
+function initProjectNavigation() {
+    const projectsGrid = document.querySelector('.projects-grid');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    
+    if (!projectsGrid || !prevBtn || !nextBtn) return;
+    
+    const cardWidth = 360 + 40; // card width + gap
+    const scrollAmount = cardWidth * 2; // Scroll 2 cards at a time
+    
+    nextBtn.addEventListener('click', () => {
+        projectsGrid.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    });
+    
+    prevBtn.addEventListener('click', () => {
+        projectsGrid.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+    });
+    
+    // Update button visibility based on scroll position
+    function updateButtonStates() {
+        const { scrollLeft, scrollWidth, clientWidth } = projectsGrid;
+        prevBtn.style.opacity = scrollLeft <= 0 ? '0.5' : '1';
+        nextBtn.style.opacity = scrollLeft >= scrollWidth - clientWidth ? '0.5' : '1';
     }
     
+    projectsGrid.addEventListener('scroll', updateButtonStates);
+    updateButtonStates(); // Initial state
+}
     // --- TEXT ANIMATIONS ---
     function initTextAnimations() {
         gsap.fromTo('.hero-element h1 span', { y: '100%', opacity: 0 }, { y: '0%', opacity: 1, stagger: 0.1, duration: 1.2, ease: 'power3.out', delay: 0.5 });
